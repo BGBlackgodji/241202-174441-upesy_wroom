@@ -1,13 +1,18 @@
 #include <Arduino.h>
+#include <ESP32Servo.h>
 
 #include <port.cpp>
 
+Servo servo01;
+
 void setup() 
 {
-    Serial.begin(9600);
+    servo01.attach(25);
 }
 
 void loop() 
 {
-    Serial.println(SPEAKER);
-}
+    servo01.write(0);
+    servo01.write(90);
+    servo01.write(0);
+} 
