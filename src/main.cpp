@@ -1,9 +1,12 @@
 #include <Arduino.h>
+#include <ESP32Servo.h>
 
 #include <api/wifi.h>
 #include <api/server.h>
 
 #include <core/setting.h>
+
+Servo servo01;
 
 void setup() 
 {
