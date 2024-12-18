@@ -1,6 +1,6 @@
 #include "setting.h"
 
-AppDisplaySetting::AppDisplaySetting() : address(0), charactor(0), line(0) {}
+AppDisplaySetting::AppDisplaySetting() {}
 
 void AppDisplaySetting::toJson(JsonObject &doc)
 {
@@ -21,8 +21,8 @@ AppBoxSetting::AppBoxSetting() {}
 void AppBoxSetting::toJson(JsonObject &doc)
 {
     doc["servoPort"] = servoPort;
-    doc["name"] = name;
-    doc["cronString"] = cronString;
+    doc["name"] = name.c_str();
+    doc["cronString"] = cronString.c_str();
 }
 
 void AppBoxSetting::fromJson(const JsonObject &doc)
@@ -35,7 +35,7 @@ void AppBoxSetting::fromJson(const JsonObject &doc)
 AppSetting::AppSetting()
 {
     display = AppDisplaySetting();
-    box = vector<AppBoxSetting>(boxNum);
+    box = vector<AppBoxSetting>(boxNum, AppBoxSetting());
 }
 
 void AppSetting::toJson(JsonDocument &doc)
@@ -48,7 +48,8 @@ void AppSetting::toJson(JsonDocument &doc)
     {
         JsonObject boxObj = boxArr.createNestedObject();
         box[i].toJson(boxObj);
-        boxArr[i].set(boxObj);
+
+        boxArr.add(boxObj);
     }
 }
 
@@ -66,7 +67,7 @@ void AppSetting::fromJson(JsonDocument &doc)
 AppSetting appSetting = AppSetting();
 
 Display display = Display();
-vector<Box> box = vector<Box>(boxNum);
+vector<Box> box = vector<Box>(boxNum, Box());
 
 void loadSetting(AppSetting setting)
 {

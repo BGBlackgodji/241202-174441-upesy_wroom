@@ -14,9 +14,9 @@ const int boxNum = 15;
 class AppDisplaySetting
 {
 public:
-    int address;
-    int charactor;
-    int line;
+    int address = 0;
+    int charactor = 0;
+    int line = 0;
 
     AppDisplaySetting();
 
@@ -27,7 +27,7 @@ public:
 class AppBoxSetting
 {
 public:
-    int servoPort = -1;
+    int servoPort = 0;
     string name = "";
     string cronString = "";
 
