@@ -1,13 +1,18 @@
 #include <Arduino.h>
 
-#include <port.cpp>
+#include <api/wifi.h>
+#include <api/server.h>
+
+#include <core/setting.h>
 
 void setup() 
 {
-    Serial.begin(9600);
+    Network::connect("KIEW_DESKTOP", "Nk5gmiSsgbGHBZxIeqJ5eg");
+
+    serverSetup();
 }
 
 void loop() 
 {
-    Serial.println(SPEAKER);
+    serverLoop();
 }
