@@ -1,7 +1,5 @@
 #include "network.h"
 
-#include <Arduino.h>
-
 bool Network::connect(string ssid, string password, int timeout)
 {
     WiFi.mode(WIFI_STA);

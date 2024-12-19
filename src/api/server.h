@@ -6,7 +6,6 @@
 #include <RichHttpServer.h>
 #include <ArduinoJson.h>
 #include <core/setting.h>
-#include <Arduino.h>
 
 using namespace std;
 
