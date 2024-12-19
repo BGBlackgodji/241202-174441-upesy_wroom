@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include <api/wifi.h>
+#include <api/network.h>
 #include <api/server.h>
 
 #include <core/setting.h>
@@ -8,10 +8,13 @@
 void setup() 
 {
     Serial.begin(9600);
+    Serial.println();
 
-    Network::connect("KIEW_DESKTOP", "Nk5gmiSsgbGHBZxIeqJ5eg");
+    if (!Network::connect("kiewdesktop", "abcde1234")) {
+        while (true) {}
+    }
 
-    Serial.println(Network::GetIPv4().c_str());
+    Serial.println(Network::GetLocalIPv4().c_str());
 
     serverSetup();
 }

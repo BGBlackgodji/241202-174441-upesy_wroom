@@ -2,6 +2,12 @@
     "files.associations": {
         "string": "cpp",
         "system_error": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "*.tcc": "cpp",
+        "vector": "cpp",
+        "fstream": "cpp",
+        "limits": "cpp",
+        "sstream": "cpp",
+        "utility": "cpp"
     }
 }
