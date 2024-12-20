@@ -2,7 +2,7 @@
 
 #include <api/network.h>
 #include <api/server.h>
-#include <api/time.h>
+#include <api/ntime.h>
 
 #include <core/setting.h>
 

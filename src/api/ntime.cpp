@@ -1,4 +1,4 @@
-#include "time.h"
+#include "ntime.h"
 
 #include <string>
 
