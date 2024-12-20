@@ -1,18 +1,14 @@
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef REST_H
+#define REST_H
 
-#include <string>
-#include <list>
 #include <RichHttpServer.h>
-#include <ArduinoJson.h>
-#include <core/setting.h>
 
 using namespace std;
 
 using RichHttpConfig = RichHttp::Generics::Configs::EspressifBuiltin;
 using RequestContext = RichHttpConfig::RequestContextType;
 
-class Server {
+class Rest {
     private:
         static SimpleAuthProvider authProvider;
         static RichHttpServer<RichHttpConfig> server;

@@ -1,5 +1,8 @@
 #include "network.h"
 
+string Network::_ssid = "";
+string Network::_password = "";
+ 
 int Network::timeout = 20 * 1000;
 
 bool Network::connect(string ssid, string password)

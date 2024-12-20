@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include <api/network.h>
-#include <api/server.h>
+#include <api/rest.h>
 #include <api/ntime.h>
 
 #include <core/setting.h>
@@ -20,12 +20,12 @@ void setup()
         while (true) {}
     }
 
-    Server::load();
+    Rest::load();
 }
 
 void loop() 
 {
-    Server::tick();
+    Rest::tick();
 
     CronJob::tick();
 }

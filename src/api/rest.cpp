@@ -1,9 +1,13 @@
-#include "server.h"
+#include "rest.h"
 
-SimpleAuthProvider Server::authProvider;
-RichHttpServer<RichHttpConfig> Server::server(80, Server::authProvider);
+#include <ArduinoJson.h>
 
-void Server::get(RequestContext &request)
+#include <core/setting.h>
+
+SimpleAuthProvider Rest::authProvider;
+RichHttpServer<RichHttpConfig> Rest::server(80, Rest::authProvider);
+
+void Rest::get(RequestContext &request)
 {
   StaticJsonDocument<10 * 1024> obj;
   appSetting.toJson(obj);
@@ -11,7 +15,7 @@ void Server::get(RequestContext &request)
   request.response.json.set(obj);
 }
 
-void Server::set(RequestContext &request) {
+void Rest::set(RequestContext &request) {
   appSetting.fromJson(request.getJsonBody());
 
   loadSetting(appSetting);
@@ -19,7 +23,7 @@ void Server::set(RequestContext &request) {
   request.response.setCode(200);
 }
 
-void Server::load() {
+void Rest::load() {
   server
     .buildHandler("/")
     .on(HTTP_GET, get)
@@ -30,6 +34,6 @@ void Server::load() {
   server.begin();
 }
 
-void Server::tick() {
+void Rest::tick() {
   server.handleClient();
 }
