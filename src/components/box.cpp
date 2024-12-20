@@ -1,5 +1,7 @@
 #include "box.h"
 
+#include <core/cron.h>
+
 int Box::_servoPort = -1;
 
 Box::Box() {}
@@ -17,14 +19,14 @@ Box Box::create(int servoPort, string pillName, string cronString) {
     Box box(servoPort);
     box.name = pillName;
 
-    // Cron.create(
-    //     const_cast<char *>(cronString.c_str()),
-    //     []() {
-    //         Box timeBox(Box::_servoPort);
-    //         timeBox.onTime();
-    //     },
-    //     false
-    // );
+    CronJob::on(
+        pillName,
+        cronString,
+        []() {
+            Box timeBox(Box::_servoPort);
+            timeBox.openInTime();
+        }
+    );
 
     return box;
 }
@@ -33,15 +35,14 @@ void Box::open() {
     servo.write(90);
 }
 
-void Box::close() {
-    servo.write(0);
-}
-
-void Box::onTime() {
+void Box::openInTime(int timeout) {
     open();
 
-    int delayTime = 1000;
-    delay(delayTime);
+    delay(timeout);
 
     close();
+}
+
+void Box::close() {
+    servo.write(0);
 }

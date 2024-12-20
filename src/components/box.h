@@ -18,8 +18,9 @@ public:
     static Box create(int servoPort, string pillName, string cronString);
 
     void open();
+    void openInTime(int timeout = 10 * 1000);
+
     void close();
-    void onTime();
 };
 
 #endif
