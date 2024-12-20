@@ -1,3 +1,6 @@
+#ifndef CRON_H
+#define CRON_H
+
 #include <string>
 #include <vector>
 #include <functional>
@@ -65,3 +68,5 @@ class CronJob {
 
         static void off(string name);
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef NTIME_H
+#define NTIME_H
+
 #include <time.h>
 
 class NetworkTime {
@@ -9,3 +12,5 @@ class NetworkTime {
 
         static void print();
 };
+
+#endif

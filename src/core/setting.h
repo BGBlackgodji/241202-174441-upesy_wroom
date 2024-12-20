@@ -1,5 +1,5 @@
-#ifndef APPSETTING_H
-#define APPSETTING_H
+#ifndef SETTING_H
+#define SETTING_H
 
 #include <string>
 #include <vector>
