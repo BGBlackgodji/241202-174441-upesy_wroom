@@ -7,20 +7,20 @@ int Box::_servoPort = -1;
 Box::Box() {}
 
 Box::Box(int servoPort) {
-    _servoPort = servoPort;
-
     servo = Servo();
     servo.attach(servoPort);
+
+    Box::_servoPort = servoPort;
 
     close();
 }
 
-Box Box::create(int servoPort, string pillName, string cronString) {
+Box Box::create(int servoPort, string boxName, string cronString) {
     Box box(servoPort);
-    box.name = pillName;
+    box.name = boxName;
 
     CronJob::on(
-        pillName,
+        boxName,
         cronString,
         []() {
             Box timeBox(Box::_servoPort);
@@ -35,10 +35,10 @@ void Box::open() {
     servo.write(90);
 }
 
-void Box::openInTime(int timeout) {
+void Box::openInTime(int delayTime) {
     open();
 
-    delay(timeout);
+    delay(delayTime);
 
     close();
 }

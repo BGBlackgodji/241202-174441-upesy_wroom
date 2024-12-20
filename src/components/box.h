@@ -15,10 +15,10 @@ public:
 
     Box();
     Box(int servoPort);
-    static Box create(int servoPort, string pillName, string cronString);
+    static Box create(int servoPort, string boxName, string cronString);
 
     void open();
-    void openInTime(int timeout = 10 * 1000);
+    void openInTime(int delayTime = 10 * 1000);
 
     void close();
 };

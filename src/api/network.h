@@ -7,10 +7,15 @@
 using namespace std;
 
 class Network {
+    private:
+        static string _ssid;
+        static string _password;
+        static int timeout;
+
     public:
         // return is success
-        static bool connect(string ssid, string password = "", int timeout = 20 * 1000);
-        static void disconnect();
+        static bool connect(string ssid, string password);
+        static bool load(string ssid, string password = "");
         
         static bool is2_4GHz(int networkIndex);
 

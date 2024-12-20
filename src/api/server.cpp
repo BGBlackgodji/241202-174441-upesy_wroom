@@ -1,17 +1,17 @@
 #include "server.h"
 
-SimpleAuthProvider authProvider;
+SimpleAuthProvider Server::authProvider;
+RichHttpServer<RichHttpConfig> Server::server(80, Server::authProvider);
 
-RichHttpServer<RichHttpConfig> server(80, authProvider);
-
-void handleGet(RequestContext& request) {
+void Server::get(RequestContext &request)
+{
   StaticJsonDocument<10 * 1024> obj;
   appSetting.toJson(obj);
 
   request.response.json.set(obj);
 }
 
-void handleSet(RequestContext& request) {
+void Server::set(RequestContext &request) {
   appSetting.fromJson(request.getJsonBody());
 
   loadSetting(appSetting);
@@ -19,20 +19,17 @@ void handleSet(RequestContext& request) {
   request.response.setCode(200);
 }
 
-void serverSetup() {
+void Server::load() {
   server
-    .buildHandler("/get")
-    .on(HTTP_GET, handleGet);
-
-  server
-    .buildHandler("/set")
-    .on(HTTP_POST, handleSet);
+    .buildHandler("/")
+    .on(HTTP_GET, get)
+    .on(HTTP_POST, set);
 
   server.clearBuilders();
 
   server.begin();
 }
 
-void serverLoop() {
+void Server::tick() {
   server.handleClient();
 }

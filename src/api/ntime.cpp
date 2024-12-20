@@ -32,6 +32,8 @@ bool NetworkTime::load(int timeout) {
         return false;
     }
 
+    print();
+
     return true;
 }
 

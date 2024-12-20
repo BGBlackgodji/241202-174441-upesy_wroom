@@ -1,6 +1,8 @@
 #include "network.h"
 
-bool Network::connect(string ssid, string password, int timeout)
+int Network::timeout = 20 * 1000;
+
+bool Network::connect(string ssid, string password)
 {
     WiFi.mode(WIFI_STA);
 
@@ -18,9 +20,14 @@ bool Network::connect(string ssid, string password, int timeout)
             return false;
         }
 
-        WiFi.begin(ssid.c_str(), password.c_str());
+        if (password.empty()) {
+            WiFi.begin(ssid.c_str());
+        }
+        else {
+            WiFi.begin(ssid.c_str(), password.c_str());
+        }
 
-        WiFi.waitForConnectResult(timeout);
+        WiFi.waitForConnectResult(Network::timeout);
 
         if (!WiFi.isConnected()) {
             Serial.println("connect timeout");
@@ -34,10 +41,25 @@ bool Network::connect(string ssid, string password, int timeout)
     return false;
 }
 
-void Network::disconnect() {
-    WiFi.disconnect();
+bool Network::load(string ssid, string password) {
+    if (!connect(ssid, password)) return false;
 
-    WiFi.mode(WIFI_OFF);
+    Network::_ssid = ssid;
+    Network::_password = password;
+
+    WiFi.onEvent(
+        [](WiFiEvent_t event, WiFiEventInfo_t info) {
+            Serial.println("disconnected");
+            Serial.println(info.wifi_sta_disconnected.reason);
+
+            while (!connect(Network::_ssid, Network::_password)) {}
+        },
+        ARDUINO_EVENT_WIFI_STA_DISCONNECTED
+    );
+
+    Serial.println(Network::GetLocalIPv4().c_str());
+
+    return true;
 }
 
 bool Network::is2_4GHz(int networkIndex) {

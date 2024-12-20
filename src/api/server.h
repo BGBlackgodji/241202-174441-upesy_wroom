@@ -12,12 +12,17 @@ using namespace std;
 using RichHttpConfig = RichHttp::Generics::Configs::EspressifBuiltin;
 using RequestContext = RichHttpConfig::RequestContextType;
 
-extern RichHttpServer<RichHttpConfig> server;
+class Server {
+    private:
+        static SimpleAuthProvider authProvider;
+        static RichHttpServer<RichHttpConfig> server;
 
-void handleGet(RequestContext& request);
-void handleSet(RequestContext& request);
+        static void get(RequestContext& request);
+        static void set(RequestContext& request);
 
-void serverSetup();
-void serverLoop();
+    public:
+        static void load();
+        static void tick();
+};
 
 #endif

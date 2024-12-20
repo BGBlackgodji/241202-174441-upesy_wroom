@@ -12,32 +12,20 @@ void setup()
     Serial.begin(9600);
     Serial.println();
 
-    if (!Network::connect("kiewdesktop", "abcde1234")) {
+    if (!Network::load("kiewdesktop", "abcde1234")) {
         while (true) {}
     }
-
-    Serial.println(Network::GetLocalIPv4().c_str());
 
     if (!NetworkTime::load()) {
         while (true) {}
     }
 
-    NetworkTime::print();
-
-    CronJob::on(
-        "test",
-        "*/2 * * * *",
-        []() {
-            Serial.println("HI!");
-        }
-    );
-
-    serverSetup();
+    Server::load();
 }
 
 void loop() 
 {
-    CronJob::tick();
+    Server::tick();
 
-    serverLoop();
+    CronJob::tick();
 }
