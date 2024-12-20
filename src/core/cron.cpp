@@ -11,10 +11,9 @@ vector<string> CronTime::splitStr(string str, char delimiter)
     istringstream stream(str);
     string token;
 
-    int idx = 0;
     while (getline(stream, token, delimiter))
     {
-        arr[idx++] = token;
+        arr.push_back(token);
     }
 
     return arr;
@@ -93,6 +92,9 @@ CronTime::CronTime(string cronStr)
             if (min_max_div[2] != -1) div_weekday = min_max_div[2];
             break;
         }
+        default: {
+            break;
+        }
         }
     }
 }
@@ -131,11 +133,15 @@ CronJobListener::CronJobListener(string jobName, string cronTime, function<void(
     once = offAfterCall;
 }
 
+tm CronJob::lastTick;
 vector<CronJobListener> CronJob::listener;
 
 void CronJob::tick()
 {
     tm timeinfo = NetworkTime::get();
+
+    if (timeinfo.tm_min == lastTick.tm_min) return;
+    lastTick = timeinfo;
 
     vector<string> rmJob;
 

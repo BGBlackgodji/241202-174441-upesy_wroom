@@ -54,6 +54,7 @@ class CronJobListener {
 
 class CronJob {
     private:
+        static tm lastTick;
         static vector<CronJobListener> listener;
 
     public:

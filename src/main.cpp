@@ -5,6 +5,7 @@
 #include <api/ntime.h>
 
 #include <core/setting.h>
+#include <core/cron.h>
 
 void setup() 
 {
@@ -21,10 +22,22 @@ void setup()
         while (true) {}
     }
 
+    NetworkTime::print();
+
+    CronJob::on(
+        "test",
+        "*/2 * * * *",
+        []() {
+            Serial.println("HI!");
+        }
+    );
+
     serverSetup();
 }
 
 void loop() 
 {
+    CronJob::tick();
+
     serverLoop();
 }
