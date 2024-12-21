@@ -5,6 +5,15 @@ string Network::_password = "";
  
 int Network::timeout = 20 * 1000;
 
+bool Network::is2_4GHz(int networkIndex) {
+    int channel = WiFi.channel(networkIndex);
+
+    Serial.print("channel: ");
+    Serial.println(channel);
+
+    return channel >= 1 && channel <= 14;
+}
+
 bool Network::connect(string ssid, string password)
 {
     WiFi.mode(WIFI_STA);
@@ -37,6 +46,7 @@ bool Network::connect(string ssid, string password)
             return false;
         }
 
+        Serial.println(Network::GetLocalIPv4().c_str());
         return true;
     }
 
@@ -44,38 +54,29 @@ bool Network::connect(string ssid, string password)
     return false;
 }
 
-bool Network::load(string ssid, string password) {
-    if (!connect(ssid, password)) return false;
-
-    Network::_ssid = ssid;
-    Network::_password = password;
-
-    WiFi.onEvent(
-        [](WiFiEvent_t event, WiFiEventInfo_t info) {
-            Serial.println("disconnected");
-            Serial.println(info.wifi_sta_disconnected.reason);
-
-            while (!connect(Network::_ssid, Network::_password)) {}
-        },
-        ARDUINO_EVENT_WIFI_STA_DISCONNECTED
-    );
-
-    Serial.println(Network::GetLocalIPv4().c_str());
-
-    return true;
-}
-
-bool Network::is2_4GHz(int networkIndex) {
-    int channel = WiFi.channel(networkIndex);
-
-    Serial.print("channel: ");
-    Serial.println(channel);
-
-    return channel >= 1 && channel <= 14;
-}
-
 std::string Network::GetLocalIPv4() {
     if (!WiFi.isConnected()) return "";
     
     return WiFi.localIP().toString().c_str();
+}
+
+bool Network::load(string ssid, string password) {
+    if (!connect(ssid, password)) 
+        return false;
+
+    Network::_ssid = ssid;
+    Network::_password = password;
+
+    return true;
+}
+
+bool Network::tick() {
+    if (WiFi.isConnected())
+        return true;
+
+    if (connect(Network::_ssid, Network::_password))
+        return true;
+    
+    delay(5 * 1000);
+    return false;
 }

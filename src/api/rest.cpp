@@ -32,6 +32,8 @@ void Rest::load() {
   server.clearBuilders();
 
   server.begin();
+
+  Serial.println("server ok");
 }
 
 void Rest::tick() {

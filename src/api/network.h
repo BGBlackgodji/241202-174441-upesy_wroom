@@ -13,13 +13,17 @@ class Network {
         static int timeout;
 
     public:
-        // return is success
-        static bool connect(string ssid, string password);
-        static bool load(string ssid, string password = "");
-        
         static bool is2_4GHz(int networkIndex);
 
+        /**
+         * @return is sucess 
+         */
+        static bool connect(string ssid, string password);
+           
         static string GetLocalIPv4();
+
+        static bool load(string ssid, string password = "");
+        static bool tick();
 };
 
 #endif

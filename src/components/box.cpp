@@ -3,10 +3,13 @@
 #include <core/cron.h>
 
 int Box::_servoPort = -1;
+int Box::timeout = 1000;
 
 Box::Box() {}
 
 Box::Box(int servoPort) {
+    pinMode(servoPort, OUTPUT);
+
     servo = Servo();
     servo.attach(servoPort);
 
@@ -33,6 +36,8 @@ Box Box::create(int servoPort, string boxName, string cronString) {
 
 void Box::open() {
     servo.write(90);
+
+    delay(Box::timeout);
 }
 
 void Box::openInTime(int delayTime) {
@@ -45,4 +50,6 @@ void Box::openInTime(int delayTime) {
 
 void Box::close() {
     servo.write(0);
+
+    delay(Box::timeout);
 }

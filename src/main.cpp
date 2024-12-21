@@ -25,7 +25,10 @@ void setup()
 
 void loop() 
 {
-    Rest::tick();
-
     CronJob::tick();
+    
+    if (!Network::tick())
+        return;
+
+    Rest::tick();
 }

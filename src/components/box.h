@@ -13,6 +13,8 @@ public:
 
     static int _servoPort;
 
+    static int timeout;
+
     Box();
     Box(int servoPort);
     static Box create(int servoPort, string boxName, string cronString);
