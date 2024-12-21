@@ -13,31 +13,21 @@ class CronTime{
     private:
         vector<string> splitStr(string str, char delimiter = ' ');
 
-        // [min, max, div]
-        vector<int> splitData(string data);
+        /** 
+         * @return nullptr, for specific data 
+         */
+        function<bool(int)> func(string data);
+        function<bool(int)> funcRange(int min, int max);
+        function<bool(int)> funcDiv(int div);
+        function<bool(int)> funcNum(vector<int> nums);
+
+        function<bool(int)> minute = CronTime::funcRange(0, 59);
+        function<bool(int)> hour = CronTime::funcRange(0, 23);
+        function<bool(int)> monthday = CronTime::funcRange(1, 31);
+        function<bool(int)> month = CronTime::funcRange(1, 12);
+        function<bool(int)> weekday = CronTime::funcRange(0, 6);
 
     public:
-        // min in range
-        unsigned short min_minute = 0;
-        unsigned short min_hour = 0;
-        unsigned short min_monthday = 1;
-        unsigned short min_month = 1;
-        unsigned short min_weekday = 0;
-
-        // max in range
-        unsigned short max_minute = 59;
-        unsigned short max_hour = 23;
-        unsigned short max_monthday = 31;
-        unsigned short max_month = 12;
-        unsigned short max_weekday = 6;
-
-        // divisible by ...
-        unsigned short div_minute = 1;
-        unsigned short div_hour = 1;
-        unsigned short div_monthday = 1;
-        unsigned short div_month = 1;
-        unsigned short div_weekday = 1;
-        
         CronTime();
         CronTime(string cronStr);
         

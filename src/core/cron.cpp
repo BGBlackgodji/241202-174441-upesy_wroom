@@ -19,29 +19,70 @@ vector<string> CronTime::splitStr(string str, char delimiter)
     return arr;
 }
 
-vector<int> CronTime::splitData(string data)
+function<bool(int)> CronTime::func(string data)
 {
     if (data == "*")
     {
-        return vector<int>{-1, -1, -1};
+        return nullptr;
     }
 
     vector<string> token = splitStr(data, '/');
     if (token.size() == 2 && token[0] == "*")
     {
-        return vector<int>{-1, -1, stoi(token[1])};
+        return CronTime::funcDiv(
+            stoi(token[1])
+        );
     }
 
     token = splitStr(data, '-');
     if (token.size() == 2)
     {
-        return vector<int>{stoi(token[0]), stoi(token[1]), -1};
+        return CronTime::funcRange(
+            stoi(token[0]),
+            stoi(token[1])
+        );
     }
 
-    int ndata = stoi(data);
-    return vector<int>{ndata, ndata, -1};
+    token = splitStr(data, ',');
+
+    vector<int> intToken;
+    for (int i = 0; i < token.size(); i++) {
+        intToken.push_back(
+            stoi(token[i])
+        );
+    }
+
+    return CronTime::funcNum(intToken);
+}
+function<bool(int)> CronTime::funcRange(int min, int max)
+{
+    return [&](int n) -> bool
+    {
+        return n >= min && n <= max;
+    };
 }
 
+function<bool(int)> CronTime::funcDiv(int div)
+{
+    return [&](int n) -> bool
+    {
+        return n % div == 0;
+    };
+}
+
+function<bool(int)> CronTime::funcNum(vector<int> nums)
+{
+    return [&](int n) -> bool
+    {
+        for (int i = 0; nums.size(); i++)
+        {
+            if (nums[i] == n)
+                return true;
+        }
+
+        return false;
+    };
+}
 CronTime::CronTime() {}
 
 CronTime::CronTime(string cronStr)
@@ -53,46 +94,40 @@ CronTime::CronTime(string cronStr)
 
     for (int i = 0; i < content.size(); i++)
     {
-        vector<int> min_max_div = splitData(content[i]);
+        string data = content[i];
+
+        function<bool(int)> callback = CronTime::func(data);
+        if (callback == nullptr) continue;
 
         switch (i)
         {
         case 0:
         {
-            if (min_max_div[0] != -1) min_minute = min_max_div[0];
-            if (min_max_div[1] != -1) max_minute = min_max_div[1];
-            if (min_max_div[2] != -1) div_minute = min_max_div[2];
-            break;
+            minute = callback;
+            break;  
         }
         case 1:
         {
-            if (min_max_div[0] != -1) min_hour = min_max_div[0];
-            if (min_max_div[1] != -1) max_hour = min_max_div[1];
-            if (min_max_div[2] != -1) div_hour = min_max_div[2];
+            hour = callback;
             break;
         }
         case 2:
         {
-            if (min_max_div[0] != -1) min_monthday = min_max_div[0];
-            if (min_max_div[1] != -1) max_monthday = min_max_div[1];
-            if (min_max_div[2] != -1) div_monthday = min_max_div[2];
+            monthday = callback;
             break;
         }
         case 3:
         {
-            if (min_max_div[0] != -1) min_month = min_max_div[0];
-            if (min_max_div[1] != -1) max_month = min_max_div[1];
-            if (min_max_div[2] != -1) div_month = min_max_div[2];
+            month = callback;
             break;
         }
         case 4:
         {
-            if (min_max_div[0] != -1) min_weekday = min_max_div[0];
-            if (min_max_div[1] != -1) max_weekday = min_max_div[1];
-            if (min_max_div[2] != -1) div_weekday = min_max_div[2];
+            weekday = callback;
             break;
         }
-        default: {
+        default:
+        {
             break;
         }
         }
@@ -102,23 +137,11 @@ CronTime::CronTime(string cronStr)
 bool CronTime::operator==(const tm &timeinfo)
 {
     return
-    (timeinfo.tm_min >= min_minute)
-    && (timeinfo.tm_hour >= min_hour)
-    && (timeinfo.tm_mday >= min_monthday)
-    && (timeinfo.tm_mon >= min_month)
-    && (timeinfo.tm_wday >= min_weekday)
-
-    && (timeinfo.tm_min <= max_minute)
-    && (timeinfo.tm_hour <= max_hour)
-    && (timeinfo.tm_mday <= max_monthday)
-    && (timeinfo.tm_mon <= max_month)
-    && (timeinfo.tm_wday <= max_weekday)
-
-    && (timeinfo.tm_min % div_minute == 0)
-    && (timeinfo.tm_hour % div_hour == 0)
-    && (timeinfo.tm_mday % div_monthday == 0)
-    && (timeinfo.tm_mon % div_month == 0)
-    && (timeinfo.tm_wday % div_weekday == 0);
+        CronTime::minute(timeinfo.tm_min) &&
+        CronTime::hour(timeinfo.tm_hour) &&
+        CronTime::monthday(timeinfo.tm_mday) &&
+        CronTime::month(timeinfo.tm_mon) &&
+        CronTime::weekday(timeinfo.tm_wday);
 }
 
 bool CronTime::operator!=(const tm &timeinfo)
@@ -126,7 +149,8 @@ bool CronTime::operator!=(const tm &timeinfo)
     return !operator==(timeinfo);
 }
 
-CronJobListener::CronJobListener(string jobName, string cronTime, function<void(void)> jobCallback, bool offAfterCall) {
+CronJobListener::CronJobListener(string jobName, string cronTime, function<void(void)> jobCallback, bool offAfterCall)
+{
     name = jobName;
     time = CronTime(cronTime);
     callback = jobCallback;
@@ -140,22 +164,27 @@ void CronJob::tick()
 {
     tm timeinfo = NetworkTime::get();
 
-    if (timeinfo.tm_min == lastTick.tm_min) return;
+    if (timeinfo.tm_min == lastTick.tm_min)
+        return;
     lastTick = timeinfo;
 
     vector<string> rmJob;
 
-    for (int i = 0; i < listener.size(); i++) {
+    for (int i = 0; i < listener.size(); i++)
+    {
         CronJobListener job = listener[i];
 
-        if (job.time != timeinfo) continue;
+        if (job.time != timeinfo)
+            continue;
         job.callback();
 
-        if (!job.once) continue;
+        if (!job.once)
+            continue;
         rmJob.push_back(job.name);
     }
 
-    for (int j = 0; j < rmJob.size(); j++) {
+    for (int j = 0; j < rmJob.size(); j++)
+    {
         off(rmJob[j]);
     }
 }
@@ -177,10 +206,12 @@ void CronJob::once(string name, string cronTime, function<void(void)> callback)
 void CronJob::off(string name)
 {
     int i = 0;
-    while (i != listener.size()) {
+    while (i != listener.size())
+    {
         CronJobListener job = listener[i];
 
-        if (job.name == name) {
+        if (job.name == name)
+        {
             listener.erase(listener.begin() + i);
             continue;
         }
